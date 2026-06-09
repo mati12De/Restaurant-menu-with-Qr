@@ -1,14 +1,13 @@
 import { createContext, useContext, useState } from "react";
+import { getTableNumber } from "../data/menuData";
 
-// 1. Create the context
 const CartContext = createContext();
 
-// 2. Build the provider — holds all cart logic
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const tableNumber = getTableNumber();
 
-  // Add item — if it already exists, increase quantity
   function addToCart(item) {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -21,7 +20,6 @@ export function CartProvider({ children }) {
     });
   }
 
-  // Remove one quantity — if it hits 0, remove from array
   function removeFromCart(id) {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === id);
@@ -34,15 +32,11 @@ export function CartProvider({ children }) {
     });
   }
 
-  // Clear the whole cart
   function clearCart() {
     setCartItems([]);
   }
 
-  // Total item count for the badge
   const cartCount = cartItems.reduce((sum, i) => sum + i.quantity, 0);
-
-  // Total price
   const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
   return (
@@ -56,6 +50,7 @@ export function CartProvider({ children }) {
         cartTotal,
         isCartOpen,
         setIsCartOpen,
+        tableNumber,
       }}
     >
       {children}
@@ -63,7 +58,6 @@ export function CartProvider({ children }) {
   );
 }
 
-// 3. Custom hook — cleaner to use in components
 export function useCart() {
   return useContext(CartContext);
 }
